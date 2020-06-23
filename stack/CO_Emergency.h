@@ -271,6 +271,8 @@ typedef struct{
                                         const uint8_t errorRegister,
                                         const uint8_t errorBit,
                                         const uint32_t infoCode);
+    /** From CO_EM_initCallbackTx() or NULL */
+    void              (*pFunctSignalTx)(uint8_t *data);
 }CO_EM_t;
 
 
@@ -421,6 +423,20 @@ void CO_EM_initCallbackRx(
                                                 const uint8_t errorRegister,
                                                 const uint8_t errorBit,
                                                 const uint32_t infoCode));
+
+/**
+ * Initialize Emergency transmit callback function.
+ *
+ * Function initializes optional callback function, which executes
+ * before error condition is transmitted. Function may modify the 8
+ * bytes EMCY object data before being transmitted.
+ *
+ * @param em This object.
+ * @param pFunctSignalTx Pointer to the callback function. Not called if NULL.
+ */
+void CO_EM_initCallbackTx(
+        CO_EM_t                *em,
+        void                  (*pFunctSignalTx)(uint8_t *data));
 
 
 /**

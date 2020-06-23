@@ -159,6 +159,7 @@ CO_ReturnError_t CO_EM_init(
     em->wrongErrorReport        = 0U;
     em->pFunctSignal            = NULL;
     em->pFunctSignalRx          = NULL;
+    em->pFunctSignalTx          = NULL;
     emPr->em                    = em;
     emPr->errorRegister         = errorRegister;
     emPr->preDefErr             = preDefErr;
@@ -227,6 +228,17 @@ void CO_EM_initCallbackRx(
 
 
 /******************************************************************************/
+void CO_EM_initCallbackTx(
+        CO_EM_t                *em,
+        void                  (*pFunctSignalTx)(uint8_t *data))
+{
+    if(em != NULL){
+        em->pFunctSignalTx = pFunctSignalTx;
+    }
+}
+
+
+/******************************************************************************/
 void CO_EM_process(
         CO_EMpr_t              *emPr,
         bool_t                  NMTisPreOrOperational,
@@ -285,6 +297,11 @@ void CO_EM_process(
 
             /* add error register */
             em->bufReadPtr[2] = *emPr->errorRegister;
+
+	    /* callback */
+            if (em->pFunctSignalTx != NULL) {
+                    em->pFunctSignalTx(em->bufReadPtr);
+            }
 
             /* copy data to CAN emergency message */
             CO_memcpy(emPr->CANtxBuff->data, em->bufReadPtr, 8U);
