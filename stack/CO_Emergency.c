@@ -160,6 +160,7 @@ CO_ReturnError_t CO_EM_init(
     em->pFunctSignal            = NULL;
     em->pFunctSignalRx          = NULL;
     em->pFunctSignalTx          = NULL;
+    em->pFunctSignalMask        = NULL;
     emPr->em                    = em;
     emPr->errorRegister         = errorRegister;
     emPr->preDefErr             = preDefErr;
@@ -235,6 +236,18 @@ void CO_EM_initCallbackTx(
     if(em != NULL){
         em->pFunctSignalTx = pFunctSignalTx;
     }
+}
+
+
+/******************************************************************************/
+void CO_EM_initCallbackMask(
+        CO_EM_t                *em,
+        bool                  (*pFunctSignalMask)(const uint8_t errorBit))
+{
+    if(em != NULL){
+        em->pFunctSignalMask = pFunctSignalMask;
+    }
+
 }
 
 
@@ -364,6 +377,10 @@ void CO_errorReport(CO_EM_t *em, const uint8_t errorBit, const uint16_t errorCod
         /* if errorBit value not supported, send emergency 'CO_EM_WRONG_ERROR_REPORT' */
         em->wrongErrorReport = errorBit;
         sendEmergency = false;
+    }
+    else if(em->pFunctSignalMask != NULL && em->pFunctSignalMask(errorBit)){
+	    /* if error is masked, do nothing */
+	    sendEmergency = false;
     }
     else{
         errorStatusBits = &em->errorStatusBits[index];

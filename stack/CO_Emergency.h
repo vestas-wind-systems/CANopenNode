@@ -273,6 +273,8 @@ typedef struct{
                                         const uint32_t infoCode);
     /** From CO_EM_initCallbackTx() or NULL */
     void              (*pFunctSignalTx)(uint8_t *data);
+    /** From CO_EM_initCallbackMask() or NULL */
+    bool              (*pFunctSignalMask)(const uint8_t errorBit);
 }CO_EM_t;
 
 
@@ -437,6 +439,21 @@ void CO_EM_initCallbackRx(
 void CO_EM_initCallbackTx(
         CO_EM_t                *em,
         void                  (*pFunctSignalTx)(uint8_t *data));
+
+
+/**
+ * Initialize Emergency error report mask callback function.
+ *
+ * Function initializes optional callback function, which executes
+ * when error condition is reported. Function must return true if the
+ * error condition is masked, false otherwise.
+ *
+ * @param em This object.
+ * @param pFunctSignalMask Pointer to the callback function. Not called if NULL.
+ */
+void CO_EM_initCallbackMask(
+        CO_EM_t                *em,
+        bool                  (*pFunctSignalMask)(const uint8_t errorBit));
 
 
 /**
