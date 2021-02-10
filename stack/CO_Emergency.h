@@ -279,6 +279,14 @@ typedef struct{
 
 
 /**
+ * Send raw emcy message
+ *
+ * @param em Emergency object.
+ * @param emcy 8 byte uint8_t array with emcy message
+ */
+int CO_sendEmcyRaw(CO_EM_t *em, const uint8_t *emcy);
+
+/**
  * Report error condition.
  *
  * Function is called on any error condition inside CANopen stack and may also

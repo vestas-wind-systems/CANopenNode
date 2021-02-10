@@ -362,6 +362,33 @@ void CO_EM_process(
     return;
 }
 
+/******************************************************************************/
+int CO_sendEmcyRaw(CO_EM_t *em, const uint8_t *emcy)
+{
+   int ret = 0;
+
+   /* verify buffer full, set overflow */
+   if(em->bufFull){
+      em->bufFull = 2;
+      ret = -1;
+   } else {
+      /* copy data to the buffer, increment writePtr and verify buffer full */
+      CO_LOCK_EMCY();
+      CO_memcpy(em->bufWritePtr, &emcy[0], 8);
+      em->bufWritePtr += 8;
+
+      if(em->bufWritePtr == em->bufEnd) em->bufWritePtr = em->buf;
+      if(em->bufWritePtr == em->bufReadPtr) em->bufFull = 1;
+      CO_UNLOCK_EMCY();
+
+      /* Optional signal to RTOS, which can resume task, which handles CO_EM_process */
+      if(em->pFunctSignal != NULL) {
+         em->pFunctSignal();
+      }
+   }
+
+   return ret;
+}
 
 /******************************************************************************/
 void CO_errorReport(CO_EM_t *em, const uint8_t errorBit, const uint16_t errorCode, const uint32_t infoCode){
