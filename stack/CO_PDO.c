@@ -457,7 +457,7 @@ static CO_SDO_abortCode_t CO_ODF_RPDOcom(CO_ODF_arg_t *ODF_arg){
         }
 
         /* if PDO is valid, bits 0..29 can not be changed */
-        if(RPDO->valid && ((value ^ RPDO->RPDOCommPar->COB_IDUsedByRPDO) & 0x3FFFFFFFL))
+        if(((value & 0x80000000) == 0U) && RPDO->valid && ((value ^ RPDO->RPDOCommPar->COB_IDUsedByRPDO) & 0x3FFFFFFFL))
             return CO_SDO_AB_INVALID_VALUE;  /* Invalid value for parameter (download only). */
 
         /* configure RPDO */
@@ -534,7 +534,7 @@ static CO_SDO_abortCode_t CO_ODF_TPDOcom(CO_ODF_arg_t *ODF_arg){
         }
 
         /* if PDO is valid, bits 0..29 can not be changed */
-        if(TPDO->valid && ((value ^ TPDO->TPDOCommPar->COB_IDUsedByTPDO) & 0x3FFFFFFFL))
+        if(((value & 0x80000000) == 0U) && (TPDO->valid && ((value ^ TPDO->TPDOCommPar->COB_IDUsedByTPDO) & 0x3FFFFFFFL)))
             return CO_SDO_AB_INVALID_VALUE;  /* Invalid value for parameter (download only). */
 
         /* configure TPDO */
