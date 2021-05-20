@@ -77,6 +77,14 @@ typedef struct{
         - 254:     Manufacturer specific.
         - 255:     Asynchronous. */
     uint8_t             transmissionType;
+    /** Minimum time between transmissions of the PDO in 100micro seconds.
+    Zero disables functionality. */
+    uint16_t            inhibitTime;
+    /** Not used */
+    uint8_t             compatibilityEntry;
+    /** Time between periodic transmissions of the PDO in milliseconds.
+    Zero disables functionality. */
+    uint16_t            eventTimer;
 }CO_RPDOCommPar_t;
 
 
